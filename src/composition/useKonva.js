@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import Konva from 'konva'
+import { useResizeObserver } from '@vueuse/core'
 
 const updateStageBoundary = (stage, objectsLayer, linkLayer) => {
   const { x, y } = stage.getClientRect()
@@ -9,13 +10,15 @@ const updateStageBoundary = (stage, objectsLayer, linkLayer) => {
   })
   const { width, height } = stage.getClientRect()
   stage.setAttrs({
-    width: width + 1,
-    height: height + 1,
+    width: Math.max(width + 1, stage.scrollTargetRect.width),
+    height: Math.max(height + 1, stage.scrollTargetRect.height),
   })
+  // width: Math.max(width + 1, stage.scrollTargetRect.width),
+  // height: Math.max(height + 1, stage.scrollTargetRect.height),
   linkLayer.getChildren().forEach((e) => e._updatePoints())
 }
 
-export const useKonva = (id, objects, links) => {
+export const useKonva = (id, scrollTarget) => {
   const stage = new Konva.Stage({ container: id, width: 0, height: 0 })
   const objectsLayer = new Konva.Layer()
   const linkLayer = new Konva.Layer()
@@ -69,10 +72,9 @@ export const useKonva = (id, objects, links) => {
   }, stage)
   linkLayer.add(link1)
 
-  updateStageBoundary(stage, objectsLayer, linkLayer)
-
   const tr = new Konva.Transformer({
-    // rotateEnabled: false,
+    rotateEnabled: false,
+    visible: false,
     // resizeEnabled: false,
   })
   const selection = new Konva.Rect({
@@ -82,15 +84,42 @@ export const useKonva = (id, objects, links) => {
 
   toolLayer.add(tr); toolLayer.add(selection)
 
+  tr.on('nodesChange', (v) => {
+    console.log(v)
+  })
+
   tr.on('dragend transformend', () => {
     updateStageBoundary(stage, objectsLayer, linkLayer)
   })
   tr.nodes([functionBlock])
 
+  useResizeObserver(scrollTarget, (entries) => {
+    console.log(entries)
+    const entry = entries[0]
+    const { width, height } = entry.contentRect
+    stage.scrollTargetRect = {
+      width, height,
+    }
+    updateStageBoundary(stage, objectsLayer, linkLayer)
+
+    // console.log(
+    //   width,
+    //   height,
+    //   { ...stage.getClientRect() },
+    //   { ...tr.getClientRect() },
+    //   tr.visible(),
+    // )
+    // // stage.scrollTargetRect = {
+    // //   width,
+    // //   height,
+    // // }
+  })
+
   let x1; let y1; let x2; let
     y2
 
   stage.on('mousedown touchstart', (e) => {
+    console.log(tr.getClientRect())
     const target = e.target.findAncestor('Group', false, stage) || e.target
     if (target === stage) {
       const { x, y } = stage.getRelativePointerPosition()
@@ -138,7 +167,6 @@ export const useKonva = (id, objects, links) => {
         updateStageBoundary()
       }
     }
-
     selection.visible(false)
   })
 

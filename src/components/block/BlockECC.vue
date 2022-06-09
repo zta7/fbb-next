@@ -1,20 +1,23 @@
 <template>
-  <q-scroll-area class="fit">
+  <q-scroll-area
+    ref="scrollAreaRef"
+    class="fit">
     <div
-      :id="id"
-      style="display: inline-block;" />
+      :id="id" />
   </q-scroll-area>
 </template>
 <script setup>
 // import Konva from 'konva'
 import { uid } from 'quasar'
-import { onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useKonva } from 'src/composition/useKonva'
 
 const id = uid()
+const scrollAreaRef = ref(null)
 
 onMounted(() => {
-  useKonva(id)
+  const scrollTarget = scrollAreaRef.value.getScrollTarget()
+  useKonva(id, scrollTarget)
   // const stage = new Konva.Stage({
   //   container: id,
   //   width: 500,
