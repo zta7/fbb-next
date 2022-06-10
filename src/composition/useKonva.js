@@ -2,22 +2,6 @@
 import Konva from 'konva'
 import { useResizeObserver } from '@vueuse/core'
 
-const updateStageBoundary = (stage, objectsLayer, linkLayer) => {
-  const { x, y } = stage.getClientRect()
-  objectsLayer.getChildren((e) => {
-    e.x(e.x() - x)
-    e.y(e.y() - y)
-  })
-  const { width, height } = stage.getClientRect()
-  stage.setAttrs({
-    width: Math.max(width + 1, stage.scrollTargetRect.width),
-    height: Math.max(height + 1, stage.scrollTargetRect.height),
-  })
-  // width: Math.max(width + 1, stage.scrollTargetRect.width),
-  // height: Math.max(height + 1, stage.scrollTargetRect.height),
-  linkLayer.getChildren().forEach((e) => e._updatePoints())
-}
-
 export const useKonva = (id, scrollTarget) => {
   const stage = new Konva.Stage({ container: id, width: 0, height: 0 })
   const objectsLayer = new Konva.Layer()
@@ -75,62 +59,67 @@ export const useKonva = (id, scrollTarget) => {
   const tr = new Konva.Transformer({
     rotateEnabled: false,
     visible: false,
-    // resizeEnabled: false,
   })
   const selection = new Konva.Rect({
     fill: 'rgba(0,0,255,0.5)',
+    width: 0,
+    height: 0,
+    x: 0,
+    y: 0,
     visible: false,
   })
 
   toolLayer.add(tr); toolLayer.add(selection)
 
-  tr.on('nodesChange', (v) => {
-    console.log(v)
-  })
+  const updateStageBoundary = () => {
+    if (tr.nodes().length === 0) {
+      tr.visible(false)
+    }
+
+    const { x, y } = stage.getClientRect()
+    objectsLayer.getChildren((e) => {
+      e.x(e.x() - x)
+      e.y(e.y() - y)
+    })
+    const { width, height } = stage.getClientRect()
+    stage.setAttrs({
+      width: Math.max(width + 1, stage.scrollTargetRect.width),
+      height: Math.max(height + 1, stage.scrollTargetRect.height),
+    })
+    linkLayer.getChildren().forEach((e) => e._updatePoints())
+
+    tr.visible(true)
+  }
 
   tr.on('dragend transformend', () => {
-    updateStageBoundary(stage, objectsLayer, linkLayer)
+    updateStageBoundary()
   })
-  tr.nodes([functionBlock])
+  // tr.nodes([functionBlock])
 
   useResizeObserver(scrollTarget, (entries) => {
-    console.log(entries)
     const entry = entries[0]
     const { width, height } = entry.contentRect
     stage.scrollTargetRect = {
       width, height,
     }
-    updateStageBoundary(stage, objectsLayer, linkLayer)
-
-    // console.log(
-    //   width,
-    //   height,
-    //   { ...stage.getClientRect() },
-    //   { ...tr.getClientRect() },
-    //   tr.visible(),
-    // )
-    // // stage.scrollTargetRect = {
-    // //   width,
-    // //   height,
-    // // }
+    updateStageBoundary()
   })
 
-  let x1; let y1; let x2; let
-    y2
+  let x1; let y1; let startWinX; let startWinY
 
-  stage.on('mousedown touchstart', (e) => {
-    console.log(tr.getClientRect())
+  stage.on('mousedown', (e) => {
     const target = e.target.findAncestor('Group', false, stage) || e.target
     if (target === stage) {
-      const { x, y } = stage.getRelativePointerPosition()
-      x1 = x; x2 = x
-      y1 = y; y2 = y
+      const { x: startX, y: startY } = stage.getRelativePointerPosition()
+      const { x, y } = e.evt
+      startWinX = x; startWinY = y
+      x1 = startX; y1 = startY
       selection.setAttrs({
         visible: true,
         width: 0,
         height: 0,
-        x,
-        y,
+        x: startX,
+        y: startY,
       })
     } else if (tr.nodes().includes(target)) {
       // do nothing
@@ -139,20 +128,18 @@ export const useKonva = (id, scrollTarget) => {
     }
   })
 
-  stage.on('mousemove touchmove', () => {
+  window.addEventListener('mousemove', (e) => {
     if (!selection.visible()) return
-    const { x, y } = stage.getRelativePointerPosition()
-    x2 = x; y2 = y
-
+    const offsetX = e.x - startWinX; const offsetY = e.y - startWinY
     selection.setAttrs({
-      x: Math.min(x1, x2),
-      y: Math.min(y1, y2),
-      width: Math.abs(x2 - x1),
-      height: Math.abs(y2 - y1),
+      x: Math.min(x1, x1 + offsetX),
+      y: Math.min(y1, y1 + offsetY),
+      width: Math.abs(offsetX),
+      height: Math.abs(offsetY),
     })
   })
 
-  stage.on('mouseup touchend', (e) => {
+  window.addEventListener('mouseup', () => {
     if (selection.visible()) {
       const shapes = objectsLayer.getChildren()
       const box = selection.getClientRect()
@@ -160,67 +147,9 @@ export const useKonva = (id, scrollTarget) => {
         (shape) => Konva.Util.haveIntersection(box, shape.getClientRect()),
       )
       tr.nodes(s)
-    } else if (e.target === stage) {
-      if (!Konva.DD.justDragged) {
-        tr.nodes([])
-        console.log('update')
-        updateStageBoundary()
-      }
     }
     selection.visible(false)
   })
-
-  return {
-    stage, objectsLayer, linkLayer,
-  }
-  // const toolLayer = new Layer()
-  // const tr = new Transformer({
-  //   // boundBoxFunc(oldBox, newBox) {
-  //   //   console.log(oldBox, newBox)
-  //   //   if (oldBox.x < 0) {
-  //   //     return {
-  //   //       ...oldBox,
-  //   //       x: 0,
-  //   //     }
-  //   //   }
-  //   //   return newBox
-  //   // },
-  // })
-  // const selection = new Rect({
-  //   fill: 'rgba(0,0,255,0.5)',
-  //   visible: false,
-  // })
-  // const sss = new Selection()
-  // toolLayer.add(tr)
-  // toolLayer.add(selection)
-  // stage.add(toolLayer)
-  // console.log(stage)
-  // tr.on('dragend transformend', () => {
-  //   updateStageBoundary(stage, objectsLayer, linkLayer)
-  // })
-
-  // let x1; let y1; let x2; let
-  //   y2
-
-  // stage.on('mousedown touchstart', (e) => {
-  //   const target = e.target.findAncestor('Group', false, stage) || e.target
-  //   if (target === stage) {
-  //     const { x, y } = stage.getRelativePointerPosition()
-  //     x1 = x; x2 = x
-  //     y1 = y; y2 = y
-  //     selection.setAttrs({
-  //       visible: true,
-  //       width: 0,
-  //       height: 0,
-  //       x,
-  //       y,
-  //     })
-  //   } else if (tr.nodes().includes(target)) {
-  //     // do nothing
-  //   } else if (objectsLayer.getChildren().includes(target)) {
-  //     tr.nodes([target])
-  //   }
-  // })
 
   // stage.on('mousemove touchmove', () => {
   //   if (!selection.visible()) return
@@ -240,13 +169,20 @@ export const useKonva = (id, scrollTarget) => {
   //     const shapes = objectsLayer.getChildren()
   //     const box = selection.getClientRect()
   //     const s = shapes.filter(
-  //       (shape) => Util.haveIntersection(box, shape.getClientRect()),
+  //       (shape) => Konva.Util.haveIntersection(box, shape.getClientRect()),
   //     )
   //     tr.nodes(s)
   //   } else if (e.target === stage) {
-  //     if (!DD.justDragged) tr.nodes([])
+  //     if (!Konva.DD.justDragged) {
+  //       tr.nodes([])
+  //       console.log('update')
+  //       // updateStageBoundary()
+  //     }
   //   }
-
   //   selection.visible(false)
   // })
+
+  return {
+    stage, objectsLayer, linkLayer,
+  }
 }

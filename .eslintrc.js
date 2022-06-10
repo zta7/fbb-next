@@ -55,7 +55,7 @@ module.exports = {
 
   // add your custom rules here
   rules: {
-
+    "linebreak-style": 'off',
     "no-unused-vars": "off",
     "@typescript-eslint/no-unused-vars": ["error"],
     
