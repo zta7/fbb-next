@@ -4640,6 +4640,11 @@
   "resolved" "https://registry.npmmirror.com/highlight.js/-/highlight.js-10.7.3.tgz"
   "version" "10.7.3"
 
+"hotkeys-js@^3.9.4":
+  "integrity" "sha512-2zuLt85Ta+gIyvs4N88pCYskNrxf1TFv3LR9t5mdAZIX8BcgQQ48F2opUptvHa6m8zsy5v/a0i9mWzTrlNWU0Q=="
+  "resolved" "https://registry.npmmirror.com/hotkeys-js/-/hotkeys-js-3.9.4.tgz"
+  "version" "3.9.4"
+
 "hpack.js@^2.1.6":
   "integrity" "sha512-zJxVehUdMGIKsRaNt7apO2Gqp0BdqW5yaiGHXXmbpvxgBYVZnAql+BJb4RO5ad2MgpbZKn5G6nMnegrH1FcNYQ=="
   "resolved" "https://registry.npmmirror.com/hpack.js/-/hpack.js-2.1.6.tgz"
@@ -6834,6 +6839,16 @@
   dependencies:
     "onetime" "^5.1.0"
     "signal-exit" "^3.0.2"
+
+"rete-connection-plugin@^0.9.0":
+  "integrity" "sha512-D+H1yAONBBFYXeMkz0sdpDm76XiqcF2N3FduaqMUqcoThocMaFB2O8TX3nJc76ksuYaLYqo/+OLXTxNa+5HQYQ=="
+  "resolved" "https://registry.npmmirror.com/rete-connection-plugin/-/rete-connection-plugin-0.9.0.tgz"
+  "version" "0.9.0"
+
+"rete@^1.4.8":
+  "integrity" "sha512-V9D6D0XtZKCERJqj2CTK4XNLFj6/Ms/8oXLf2bljF3WNhiaVpyzKKw1TVlJuL0CJ1FAEyv2I+rh86zzVlQJurQ=="
+  "resolved" "https://registry.npmmirror.com/rete/-/rete-1.4.8.tgz"
+  "version" "1.4.8"
 
 "retry@^0.13.1":
   "integrity" "sha512-XQBQ3I8W1Cge0Seh+6gjj03LbmRFWuoszgK9ooCpwYIrhhoO80pfq4cUkU5DkknwfOfFteRwlZ56PYOGYyFWdg=="

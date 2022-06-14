@@ -3,7 +3,8 @@
     ref="scrollAreaRef"
     class="fit">
     <div
-      :id="id" />
+      :id="id"
+      tabindex="0" />
   </q-scroll-area>
 </template>
 <script setup>

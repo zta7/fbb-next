@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import Konva from 'konva'
+import hotkeys from 'hotkeys-js'
 import { useResizeObserver } from '@vueuse/core'
 
 export const useKonva = (id, scrollTarget) => {
@@ -58,7 +59,6 @@ export const useKonva = (id, scrollTarget) => {
 
   const tr = new Konva.Transformer({
     rotateEnabled: false,
-    visible: false,
   })
   const selection = new Konva.Rect({
     fill: 'rgba(0,0,255,0.5)',
@@ -94,7 +94,16 @@ export const useKonva = (id, scrollTarget) => {
   tr.on('dragend transformend', () => {
     updateStageBoundary()
   })
-  // tr.nodes([functionBlock])
+
+  const container = stage.container()
+
+  hotkeys('del', { element: container }, () => {
+    if (tr.nodes().length > 0) {
+      tr.nodes().forEach((e) => e.remove())
+      tr.nodes([])
+    }
+  })
+  // container.on('')
 
   useResizeObserver(scrollTarget, (entries) => {
     const entry = entries[0]

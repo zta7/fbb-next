@@ -10,6 +10,7 @@ const DefaultConfig = {
   lineCap: 'round',
   lineJoin: 'round',
   draggable: false,
+  bezier: true,
 }
 
 export class Link extends Line {
@@ -19,7 +20,6 @@ export class Link extends Line {
       ...DefaultConfig,
     })
     this.stage = stage
-    console.log(stage)
     this.init()
   }
   _setEventListener() {
@@ -52,10 +52,19 @@ export class Link extends Line {
   _updatePoints() {
     const fp = this.fromItem.cornerPosition()
     const tp = this.toItem.cornerPosition()
+    const k = (tp.y - fp.y) / (tp.x - fp.x)
+    const distance = Math.sqrt(
+      (fp.x - tp.x) ** 2 + (fp.y - tp.y) ** 2,
+    )
+    console.log(k, distance)
 
     this.points([
       fp.x,
       fp.y,
+      fp.x,
+      fp.y + (distance / 2),
+      tp.x,
+      tp.y - (distance / 2),
       tp.x,
       tp.y,
     ])
