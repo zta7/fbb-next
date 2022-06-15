@@ -76,12 +76,18 @@ export class Link extends Line {
     const { from, to } = this.attrs
     const fromItem = this.stage.findOne(`#${from}`)
     const toItem = this.stage.findOne(`#${to}`)
-    // console.log(fromItem)
+    console.log(fromItem && toItem)
     if (fromItem && toItem) {
       this.fromItem = fromItem
       this.toItem = toItem
       this._setEventListener()
       this._updatePoints()
+    } else {
+      console.log('should remove')
+      console.log(this.stage)
+      setTimeout(() => {
+        this.destroy()
+      }, 0)
     }
   }
 }
