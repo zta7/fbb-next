@@ -47,14 +47,14 @@ export const useKonva = (id, scrollTarget) => {
   objectsLayer.add(test)
 
   // then links
-  Array.from({ length: 10 }).forEach((e, i) => {
-    const link = new Konva.Link({
-      id: '3',
-      from: '1',
-      to: `inputEvents${i}`,
-    }, stage)
-    linkLayer.add(link)
-  })
+  // Array.from({ length: 10 }).forEach((e, i) => {
+  //   const link = new Konva.Link({
+  //     id: '3',
+  //     from: '1',
+  //     to: `inputEvents${i}`,
+  //   }, stage)
+  //   linkLayer.add(link)
+  // })
 
   const tr = new Konva.Transformer({
     rotateEnabled: false,

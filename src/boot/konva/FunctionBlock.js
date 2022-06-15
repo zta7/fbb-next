@@ -14,16 +14,15 @@ export class FunctionBlock extends Group {
     this.inputEvents = Array.from({ length: 10 }, (e, i) => ({ id: `inputEvents${i}`, text: `inputEvent-${i}` }))
     this.outputEvents = Array.from({ length: 20 }, (e, i) => ({ id: `outputEvents${i}`, text: `outputEvent-${i}` }))
 
-    this.init()
+    // this.init()
 
-    // const _label = new Text({
-    //   text: label,
-    //   fontSize: 18,
-    //   fontFamily: 'Calibri',
-    //   fill: '#555',
-    // })
-    // y = _label.height()
-    // this.add(_label)
+    const _label = new Text({
+      text: 'FB1',
+      fontSize: 18,
+      fontFamily: 'Calibri',
+      fill: '#555',
+    })
+    this.add(_label)
 
     // // const anchorSize = { width: 10, height: 10 }
     // // const fontSize = 10
