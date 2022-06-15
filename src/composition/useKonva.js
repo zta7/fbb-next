@@ -16,21 +16,18 @@ export const useKonva = (id, scrollTarget) => {
     x: 20,
     y: 20,
     draggable: true,
+  }, 'right-middle')
+  // const anchor2 = new Konva.Anchor({
+  //   id: '2',
+  //   x: 40,
+  //   y: 40,
+  //   draggable: true,
 
-  })
-  const anchor2 = new Konva.Anchor({
-    id: '2',
-    x: 40,
-    y: 40,
-    draggable: true,
-
-  })
+  // })
   const functionBlock = new Konva.FunctionBlock({
     id: '4',
     x: 60,
     y: 60,
-    width: 200,
-    height: 200,
     draggable: true,
   })
   const test = new Konva.Test({
@@ -44,18 +41,20 @@ export const useKonva = (id, scrollTarget) => {
   })
 
   objectsLayer.add(anchor1)
-  objectsLayer.add(anchor2)
+  // objectsLayer.add(anchor2)
   objectsLayer.add(functionBlock)
   objectsLayer.add(itext)
   objectsLayer.add(test)
 
   // then links
-  const link1 = new Konva.Link({
-    id: '3',
-    from: '1',
-    to: '5',
-  }, stage)
-  linkLayer.add(link1)
+  Array.from({ length: 10 }).forEach((e, i) => {
+    const link = new Konva.Link({
+      id: '3',
+      from: '1',
+      to: `inputEvents${i}`,
+    }, stage)
+    linkLayer.add(link)
+  })
 
   const tr = new Konva.Transformer({
     rotateEnabled: false,
