@@ -29,6 +29,16 @@ export const useKonva = (id, scrollTarget) => {
     x: 60,
     y: 60,
     draggable: true,
+    name: 'FB1',
+    label: 'TEST',
+  })
+  const functionBlock2 = new Konva.FunctionBlock({
+    id: '4',
+    x: 200,
+    y: 200,
+    draggable: true,
+    name: 'FB2',
+    label: 'TEST2',
   })
   const test = new Konva.Test({
     draggable: true,
@@ -43,18 +53,21 @@ export const useKonva = (id, scrollTarget) => {
   objectsLayer.add(anchor1)
   // objectsLayer.add(anchor2)
   objectsLayer.add(functionBlock)
+  objectsLayer.add(functionBlock2)
   objectsLayer.add(itext)
   objectsLayer.add(test)
 
   // then links
   Array.from({ length: 10 }).forEach((e, i) => {
     const link = new Konva.Link({
-      id: '3',
-      from: '1',
-      to: `inputEvents${i}`,
+      id: `${i}`,
+      to: `FB1.inputEvents.${i}`,
+      from: `FB2.outputEvents.${i}`,
     }, stage)
     linkLayer.add(link)
   })
+
+  linkLayer.moveDown()
 
   const tr = new Konva.Transformer({
     rotateEnabled: false,
@@ -76,6 +89,9 @@ export const useKonva = (id, scrollTarget) => {
     }
 
     const { x, y } = stage.getClientRect()
+
+    // console.log(stage.getClientRect(), linkLayer.getClientRect())
+
     objectsLayer.getChildren((e) => {
       e.x(e.x() - x)
       e.y(e.y() - y)

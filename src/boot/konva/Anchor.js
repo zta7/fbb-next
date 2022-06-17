@@ -6,8 +6,6 @@ const DefaultConfig = {
   fill: 'green',
   stroke: 'black',
   strokeWidth: 1,
-  shadowEnabled: false,
-  shadowForStrokeEnabled: false,
 }
 
 export class Anchor extends Rect {

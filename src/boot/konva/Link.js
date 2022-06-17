@@ -53,11 +53,7 @@ export class Link extends Line {
     if (!this.fromItem && !this.toItem) return
     const fp = this.fromItem.cornerPosition()
     const tp = this.toItem.cornerPosition()
-    // const k = (tp.y - fp.y) / (tp.x - fp.x)
-    // const distance = Math.sqrt(
-    //   (fp.x - tp.x) ** 2 + (fp.y - tp.y) ** 2,
-    // )
-    const curvature = 0.4
+    const curvature = 0.5
     const hx1 = fp.x + Math.abs(tp.x - fp.x) * curvature
     const hx2 = tp.x - Math.abs(tp.x - fp.x) * curvature
 
@@ -83,8 +79,6 @@ export class Link extends Line {
       this._setEventListener()
       this._updatePoints()
     } else {
-      console.log('should remove')
-      console.log(this.stage)
       setTimeout(() => {
         this.destroy()
       }, 0)
